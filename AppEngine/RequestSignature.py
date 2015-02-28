@@ -37,8 +37,4 @@ class RequestSignature(object):
         return signature == RequestSignature.__calculate_signature(params, salt)
 
 if __name__ == "__main__":
-    print RequestSignature.sign(["a", "b", "c"], "sdfrefetgetwg")
-    print RequestSignature.check(["a", "b", "c"], "sdfrefetgetwg", \
-        'edd8e65cb79faf2f0001baa291359639d1d04323616c8e2707eeff0b1bedae44')
-    print RequestSignature.check(["a", "b", "c"], "sdfrefetgetwg", \
-        'edd8e65cb79faf2f0001baa291359639d1d04323616c8e2707eeff0b1bedae45')
+    print RequestSignature.sign(["test1", "8.36"], "cce944f3-bebb-11e4-9867-53a46b3f6b11")
