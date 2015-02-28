@@ -29,9 +29,9 @@ class ExportCSV(webapp2.RequestHandler):
 
         self.response.headers['Content-Type'] = 'text/plain'
         for temperature_data in temperature_list:
-            self.response.write("{0};{1}\n".format( \
+            self.response.write("{0},{1}\n".format( \
                                                   temperature_data.temperature, \
-                                                  temperature_data.timestamp))
+                                                  temperature_data.timestamp.strftime('%Y-%m-%d %H:%M:%S')))
 
 class AddDevice(webapp2.RequestHandler):
     def get(self):
