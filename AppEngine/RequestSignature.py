@@ -37,4 +37,4 @@ class RequestSignature(object):
         return signature == RequestSignature.__calculate_signature(params, salt)
 
 if __name__ == "__main__":
-    print RequestSignature.sign(["test1", "8.36"], "cce944f3-bebb-11e4-9867-53a46b3f6b11")
+    print RequestSignature.sign(["test1", "8.36"], "878911ba-bf76-11e4-9790-f51b4ef9ee8b")

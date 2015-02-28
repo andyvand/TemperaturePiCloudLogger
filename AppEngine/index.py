@@ -15,6 +15,23 @@ class Index(webapp2.RequestHandler):
     def get(self):
         self.response.write('hello')
 
+class ExportCSV(webapp2.RequestHandler):
+    def get(self):
+        # get device id
+        device_id = self.request.get('did')
+        if (device_id == ''):
+            self.error(400)
+            self.response.write('ERROR: missing parameter device id did')
+            return
+        
+        temperature_list = TemperatureDataModel.Temperature.temperatures_by_device( \
+                                            ndb.Key("Device", device_id))
+
+        self.response.headers['Content-Type'] = 'text/plain'
+        for temperature_data in temperature_list:
+            self.response.write("{0};{1}\n".format( \
+                                                  temperature_data.temperature, \
+                                                  temperature_data.timestamp))
 
 class AddDevice(webapp2.RequestHandler):
     def get(self):
@@ -97,5 +114,6 @@ class Save(webapp2.RequestHandler):
 application = webapp2.WSGIApplication([
     ('/', Index),
     ('/save', Save),
+    ('/export/csv', ExportCSV),
     ('/add/device', AddDevice),
 ], debug=True)
