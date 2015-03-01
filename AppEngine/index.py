@@ -5,6 +5,7 @@ import webapp2
 import uuid
 import RequestSignature
 import TemperatureDataModel
+import datetime
 from google.appengine.ext import ndb
 
 
@@ -24,7 +25,24 @@ class ExportCSV(webapp2.RequestHandler):
             self.response.write('ERROR: missing parameter device id did')
             return
         
-        temperature_list = TemperatureDataModel.Temperature.temperatures_by_device( \
+        start = self.request.get('start')
+        end = self.request.get('end')
+        
+        if start != '' and end != '':
+            try:
+                start = datetime.datetime.strptime(start, '%Y-%m-%d')
+                end = datetime.datetime.strptime(end, '%Y-%m-%d')
+            except ValueError:
+                self.error(400)
+                self.response.write('ERROR: wrong dates')
+                return
+   
+            temperature_list = TemperatureDataModel.Temperature.temperatures_by_device_date_filter( \
+                                            ndb.Key("Device", device_id), \
+                                            start, \
+                                            end)
+        else:
+            temperature_list = TemperatureDataModel.Temperature.temperatures_by_device( \
                                             ndb.Key("Device", device_id))
 
         self.response.headers['Content-Type'] = 'text/plain'
