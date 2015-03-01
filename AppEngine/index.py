@@ -27,6 +27,7 @@ class ExportCSV(webapp2.RequestHandler):
         
         start = self.request.get('start')
         end = self.request.get('end')
+        hours = self.request.get('hours')
         
         if start != '' and end != '':
             try:
@@ -128,10 +129,34 @@ class Save(webapp2.RequestHandler):
                                                             temperature = temperature)
         
         temperature_data.put()
+        
+class Chart(webapp2.RequestHandler):
+    def get(self):
+        # get device id
+        device_id = self.request.get('did')
+        if (device_id == ''):
+            self.error(400)
+            self.response.write('ERROR: missing parameter device id did')
+            return
+        
+        template = template_env.get_template('chart.html')
+        
+        temperature_list = TemperatureDataModel.Temperature.temperatures_by_device_since( \
+                                            ndb.Key("Device", device_id), 24)
+
+        chart_data = ''
+        for temperature_data in temperature_list:
+            chart_data += "['{0}',{1}],\n".format(temperature_data.timestamp.strftime('%Y-%m-%d %H:%M'), \
+                                                  temperature_data.temperature, \
+                                                  )
+        
+        self.response.out.write(
+            template.render({'chart_data' : chart_data}))
 
 application = webapp2.WSGIApplication([
     ('/', Index),
     ('/save', Save),
     ('/export/csv', ExportCSV),
+    ('/export/chart', Chart),
     ('/add/device', AddDevice),
 ], debug=True)

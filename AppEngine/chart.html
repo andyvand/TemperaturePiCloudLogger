@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>Temperature Chart</title>
+	<script type="text/javascript" src="https://www.google.com/jsapi?autoload={'modules':[{'name':'visualization','version':'1','packages':['corechart']}]}"></script>
+	<script type="text/javascript">
+		google.load('visualization', '1', {packages: ['corechart']});
+	    google.setOnLoadCallback(drawChart);
+	
+	    function drawChart() {
+		    var data = google.visualization.arrayToDataTable([
+		        ['Time', 'Temperature'],
+		        {{ chart_data }}
+	       	]);
+	
+	      	var options = {
+		        width: 1000,
+		        height: 563,
+		        hAxis: {
+		          title: 'Time',
+		        },
+		        vAxis: {
+		          title: 'Temperature'
+		        }
+	      	};
+	
+	      	var chart = new google.visualization.ColumnChart(
+	        	document.getElementById('ex1'));
+	
+	      	chart.draw(data, options);
+	    }
+	</script> 
+</head>
+<body>
+    <h1>Temperature</h1>
+    <div>
+    	<div id="ex1"></div>	
+    </div>
+</body>
+</html>
