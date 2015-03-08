@@ -10,6 +10,10 @@ class Temperature(ndb.Model):
         return cls.query(ancestor=ancestor_key).order(cls.timestamp)
     
     @classmethod
+    def temperatures_last(cls, ancestor_key):
+        return cls.query(ancestor=ancestor_key).order(-cls.timestamp).fetch(1)[0]
+    
+    @classmethod
     def temperatures_by_device_date_filter(cls, ancestor_key, start, end):
         return cls.query(ancestor=ancestor_key). \
             filter(ndb.GenericProperty('timestamp') >= start). \

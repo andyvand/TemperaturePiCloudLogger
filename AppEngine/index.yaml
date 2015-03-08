@@ -14,3 +14,9 @@ indexes:
   ancestor: yes
   properties:
   - name: timestamp
+
+- kind: Temperature
+  ancestor: yes
+  properties:
+  - name: timestamp
+    direction: desc
