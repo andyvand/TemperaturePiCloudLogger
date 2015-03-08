@@ -8,7 +8,6 @@ import TemperatureDataModel
 import datetime
 from google.appengine.ext import ndb
 
-
 template_env = jinja2.Environment(
                             loader=jinja2.FileSystemLoader(os.getcwd()))
 
@@ -24,7 +23,7 @@ class ExportLast(webapp2.RequestHandler):
             self.error(400)
             self.response.write('ERROR: missing parameter device id did')
             return
-        
+
         temperature = TemperatureDataModel.Temperature.temperatures_last( \
                                             ndb.Key("Device", device_id))
 
@@ -41,11 +40,11 @@ class ExportCSV(webapp2.RequestHandler):
             self.error(400)
             self.response.write('ERROR: missing parameter device id did')
             return
-        
+
         start = self.request.get('start')
         end = self.request.get('end')
         hours = self.request.get('hours')
-        
+
         if start != '' and end != '':
             try:
                 start = datetime.datetime.strptime(start, '%Y-%m-%d')
@@ -54,7 +53,7 @@ class ExportCSV(webapp2.RequestHandler):
                 self.error(400)
                 self.response.write('ERROR: wrong dates')
                 return
-   
+
             temperature_list = TemperatureDataModel.Temperature.temperatures_by_device_date_filter( \
                                             ndb.Key("Device", device_id), \
                                             start, \
@@ -68,7 +67,6 @@ class ExportCSV(webapp2.RequestHandler):
             self.response.write("{0},{1}\n".format(temperature_data.timestamp.strftime('%Y-%m-%d %H:%M:%S'), \
                                                   temperature_data.temperature, \
                                                   ))        
-
 
 class Save(webapp2.RequestHandler):
     def get(self):
@@ -85,23 +83,22 @@ class Save(webapp2.RequestHandler):
             self.error(400)
             self.response.write('ERROR: wrong device id')
             return
-        
+
         device = device_list[0]
-        
+
         # get temperature
         temperature_param = self.request.get('t')
         if (temperature_param == ''):
             self.error(400)
             self.response.write('ERROR: missing parameter temperature t')
             return
-        
+
         try:
             temperature = float(temperature_param)
         except ValueError:
             self.error(400)
             self.response.write('ERROR: temperature t is not number')
             return
-        
 
         # get signature
         signature = self.request.get('sig')
@@ -115,12 +112,12 @@ class Save(webapp2.RequestHandler):
             self.error(401)
             self.response.write('ERROR: wrong signature')
             return
-        
+
         temperature_data = TemperatureDataModel.Temperature(parent = ndb.Key("Device", device_id),
                                                             temperature = temperature)
-        
+
         temperature_data.put()
-        
+
 class Chart(webapp2.RequestHandler):
     def get(self):
         # get device id
@@ -129,9 +126,9 @@ class Chart(webapp2.RequestHandler):
             self.error(400)
             self.response.write('ERROR: missing parameter device id did')
             return
-        
+
         template = template_env.get_template('chart.html')
-        
+
         temperature_list = TemperatureDataModel.Temperature.temperatures_by_device_since( \
                                             ndb.Key("Device", device_id), 24)
 
@@ -140,7 +137,7 @@ class Chart(webapp2.RequestHandler):
             chart_data += "['{0}',{1}],\n".format(temperature_data.timestamp.strftime('%Y-%m-%d %H:%M'), \
                                                   temperature_data.temperature, \
                                                   )
-        
+
         self.response.out.write(
             template.render({'chart_data' : chart_data}))
 

@@ -15,7 +15,7 @@ class AddDevice(webapp2.RequestHandler):
         template = template_env.get_template('add_device_template.html')
         self.response.out.write(
             template.render())
-    
+
     def post(self):
         device_id = self.request.get('did')
         if (device_id == ''):
@@ -24,14 +24,14 @@ class AddDevice(webapp2.RequestHandler):
             return
 
         description = self.request.get('description')
-        
+
         secret = str(uuid.uuid1())
-        
+
         device = TemperatureDataModel.Device()
         device.device_id = device_id
         device.description = description
         device.secret = secret
-        
+
         device.put()
         self.response.write(secret)
 
