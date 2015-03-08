@@ -26,6 +26,11 @@ class ExportLast(webapp2.RequestHandler):
 
         temperature = TemperatureDataModel.Temperature.temperatures_last( \
                                             ndb.Key("Device", device_id))
+        
+        if temperature == None:
+            self.error(400)
+            self.response.write('ERROR: wrong device id')
+            return
 
         self.response.headers['Content-Type'] = 'text/plain'
         self.response.write("{0},{1}\n".format(temperature.timestamp.strftime('%Y-%m-%d %H:%M:%S'), \
